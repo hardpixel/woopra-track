@@ -1,13 +1,23 @@
 require 'woopra_track/version'
-require 'woopra_track/tracker'
+require 'woopra_track/helper'
 
 module WoopraTrack
-  def config(request, config=nil, cookies=nil)
-    tracker = Tracker.new request
+  autoload :Tracker, 'woopra_track/tracker'
 
-    tracker.config(config)      unless config.nil?
-    tracker.set_cookie(cookies) unless cookies.nil?
-
-    tracker
+  class << self
+    def included(model_class)
+      model_class.extend self
+    end
   end
+
+  def woopra(request, config=nil, cookies=nil)
+    @woopra = Tracker.new request
+
+    @woopra.config(config)      unless config.nil?
+    @woopra.set_cookie(cookies) unless cookies.nil?
+  end
+end
+
+if defined? ActionView::Base
+  ActionView::Base.send :include, WoopraTrack::Helper
 end
