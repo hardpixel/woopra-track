@@ -141,16 +141,18 @@ module WoopraTrack
         request_headers   = { 'User-Agent' => @request.env['HTTP_USER_AGENT'] }
         request_response  = Typhoeus.get(request_url, headers: request_headers)
 
-        if @logger
-          if request_response.success?
-            @logger.info("Woopra") { "Success: #{request_url}" }
-          elsif request_response.timed_out?
-            @logger.warn("Woopra") { "Timeout: #{request_url}" }
-          elsif request_response.code == 0
-            @logger.error("Woopra") { "#{request_response.return_message}, #{request_url}" }
-          else
-            @logger.error("Woopra") { "WOOPRA Failed: #{request_response.code.to_s}, #{request_url}" }
-          end
+        log_request(request_response) if @logger
+      end
+
+      def log_request(response)
+        if response.success?
+          @logger.info("Woopra") { "Success: #{request_url}" }
+        elsif response.timed_out?
+          @logger.warn("Woopra") { "Timeout: #{request_url}" }
+        elsif response.code == 0
+          @logger.error("Woopra") { "#{response.return_message}, #{request_url}" }
+        else
+          @logger.error("Woopra") { "WOOPRA Failed: #{response.code}, #{request_url}" }
         end
       end
 
