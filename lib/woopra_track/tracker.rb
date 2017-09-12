@@ -137,13 +137,13 @@ module WoopraTrack
         request_response  = Typhoeus.get(request_url, headers: request_headers)
 
         if request_response.success?
-          log("WOOPRA Success: #{request_url}")
+          logger.info("Woopra") { "Success: #{request_url}" }
         elsif request_response.timed_out?
-          log("WOOPRA Timeout: #{request_url}")
+          logger.warn("Woopra") { "Timeout: #{request_url}" }
         elsif request_response.code == 0
-          log("WOOPRA Error: #{request_response.return_message}, #{request_url}")
+          logger.error("Woopra") { "#{request_response.return_message}, #{request_url}" }
         else
-          log("WOOPRA Failed: #{request_response.code.to_s}, #{request_url}")
+          logger.error("Woopra") { "WOOPRA Failed: #{request_response.code.to_s}, #{request_url}" }
         end
       end
 
