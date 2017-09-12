@@ -1,5 +1,5 @@
 require 'uri'
-require 'net/http'
+require 'typhoeus'
 
 module WoopraTrack
   class Tracker
@@ -117,7 +117,7 @@ module WoopraTrack
         }
 
         user_params = Hash[@user.map { |k, v| [:"cv_#{k}", "#{v}"] }]
-        get_params  = get_params.merge(user_params).merge(ce_app: @@application_id)
+        get_params  = get_params.merge(user_params)
 
         if event.nil?
           request_url = URI.join(request_url, 'track/ce')
@@ -132,14 +132,19 @@ module WoopraTrack
           end
         end
 
-        request_url.query     = URI.encode_www_form(get_params)
-        http                  = Net::HTTP.new(request_url.host, request_url.port)
-        http.use_ssl          = true
-        http.verify_mode      = OpenSSL::SSL::VERIFY_NONE
-        request               = Net::HTTP::Get.new(request_url)
-        request['user-agent'] = @request.env['HTTP_USER_AGENT']
+        request_url.query = URI.encode_www_form(get_params.merge(ce_app: @@application_id))
+        request_headers   = { 'User-Agent' => @request.env['HTTP_USER_AGENT'] }
+        request_response  = Typhoeus.get(request_url, headers: request_headers)
 
-        http.request(request)
+        if request_response.success?
+          log("WOOPRA Success: #{request_url}")
+        elsif request_response.timed_out?
+          log("WOOPRA Timeout: #{request_url}")
+        elsif request_response.code == 0
+          log("WOOPRA Error: #{request_response.return_message}, #{request_url}")
+        else
+          log("WOOPRA Failed: #{response.code.to_s}, #{request_url}")
+        end
       end
 
       def random_cookie
