@@ -38,6 +38,10 @@ module WoopraTrack
       @current_config[:cookie_value]  = @request.cookies[@current_config[:cookie_name]] || random_cookie
     end
 
+    def enable_logging
+      @logger = Logger.new(STDOUT)
+    end
+
     def config(data)
       data = Hash(data).select { |k, _v| k.in? @@default_config.keys }
       data = data.except(:ip_address, :cookie_value)
@@ -109,7 +113,6 @@ module WoopraTrack
     private
 
       def http_request(event=nil)
-        logger      = Logger.new(STDOUT)
         request_url = 'https://www.woopra.com'
         get_params  = {
           host:    @current_config[:domain],
@@ -138,14 +141,16 @@ module WoopraTrack
         request_headers   = { 'User-Agent' => @request.env['HTTP_USER_AGENT'] }
         request_response  = Typhoeus.get(request_url, headers: request_headers)
 
-        if request_response.success?
-          logger.info("Woopra") { "Success: #{request_url}" }
-        elsif request_response.timed_out?
-          logger.warn("Woopra") { "Timeout: #{request_url}" }
-        elsif request_response.code == 0
-          logger.error("Woopra") { "#{request_response.return_message}, #{request_url}" }
-        else
-          logger.error("Woopra") { "WOOPRA Failed: #{request_response.code.to_s}, #{request_url}" }
+        if @logger
+          if request_response.success?
+            @logger.info("Woopra") { "Success: #{request_url}" }
+          elsif request_response.timed_out?
+            @logger.warn("Woopra") { "Timeout: #{request_url}" }
+          elsif request_response.code == 0
+            @logger.error("Woopra") { "#{request_response.return_message}, #{request_url}" }
+          else
+            @logger.error("Woopra") { "WOOPRA Failed: #{request_response.code.to_s}, #{request_url}" }
+          end
         end
       end
 
