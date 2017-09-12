@@ -1,5 +1,6 @@
 require 'uri'
 require 'typhoeus'
+require 'logger'
 
 module WoopraTrack
   class Tracker
@@ -108,6 +109,7 @@ module WoopraTrack
     private
 
       def http_request(event=nil)
+        logger      = Logger.new(STDOUT)
         request_url = 'https://www.woopra.com'
         get_params  = {
           host:    @current_config[:domain],
