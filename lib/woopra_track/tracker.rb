@@ -143,7 +143,7 @@ module WoopraTrack
         elsif request_response.code == 0
           log("WOOPRA Error: #{request_response.return_message}, #{request_url}")
         else
-          log("WOOPRA Failed: #{response.code.to_s}, #{request_url}")
+          log("WOOPRA Failed: #{request_response.code.to_s}, #{request_url}")
         end
       end
 
