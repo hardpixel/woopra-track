@@ -70,17 +70,19 @@ If you wish to identify a user without any tracking event, don't forget to `push
 
 ```ruby
 # Push through front-end
-@woopra.identify(user_hash).push()
+@woopra.identify(user_hash)
+@woopra.push
 
 # Push through back-end
-@woopra.identify(user_hash).push(true)
+@woopra.identify(user_hash)
+@woopra.push(true)
 ```
 
 If you wish to track page views, just call `track`:
 
 ``` ruby
 # Front-end tracking:
-@woopra.track()
+@woopra.track
 
 # Back-end tracking:
 @woopra.track(true)
@@ -102,7 +104,7 @@ class PagesController < ApplicationController
       email:   'johndoe@website.com',
       name:    'John Doe',
       company: 'Business'
-    }).track()
+    })
 
     # Track a custom event through the front end...
     @woopra.track('play', {
@@ -117,6 +119,9 @@ class PagesController < ApplicationController
       username: 'johndoe',
       plan:     'Gold'
     }, true)
+
+    # Enable front-end tracking
+    @woopra.track
 
     # Your code here...
   end
