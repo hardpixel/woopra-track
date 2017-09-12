@@ -1,6 +1,10 @@
 # WoopraTrack
 
-Tracking library for woopra.com. Woopra analytics client-side and server-side tracking helper.
+Tracking library for [woopra.com](https://www.woopra.com). Woopra analytics client-side and server-side tracking helper.
+
+[![Gem Version](https://badge.fury.io/rb/woopra_track.svg)](https://badge.fury.io/rb/woopra_track)
+[![Build Status](https://travis-ci.org/hardpixel/woopra-track.svg?branch=master)](https://travis-ci.org/hardpixel/woopra-track)
+[![Code Climate](https://codeclimate.com/github/hardpixel/woopra-track/badges/gpa.png)](https://codeclimate.com/github/hardpixel/woopra-track)
 
 ## Installation
 
