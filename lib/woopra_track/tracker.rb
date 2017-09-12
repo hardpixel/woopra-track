@@ -122,9 +122,9 @@ module WoopraTrack
         get_params  = get_params.merge(user_params)
 
         if event.nil?
-          request_url = URI.join(request_url, 'track/ce')
-        else
           request_url = URI.join(request_url, 'track/identify')
+        else
+          request_url = URI.join(request_url, 'track/ce')
 
           if event.first.nil?
             get_params = get_params.merge(event: 'pv', ce_url: @request.url)
