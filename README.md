@@ -143,7 +143,7 @@ and add the code in your template's header (here `home.html.erb`)
 </html>
 ```
 
-Finally, if you wish to track your users only through the back-end, you should set the cookie on your user's browser. However, if you are planning to also use front-end tracking, don't even bother with that step, the JavaScript tracker will handle it for you.
+If you wish to track your users only through the back-end, you should set the cookie on your user's browser. However, if you are planning to also use front-end tracking, don't even bother with that step, the JavaScript tracker will handle it for you.
 
 ``` ruby
 # During initialization
@@ -152,6 +152,12 @@ woopra(request, config, cookies)
 
 # Using set cookie function
 @woopra.set_cookie(cookies)
+```
+
+Finally, if you want to enable logging for back-end tracking requests, just call `enable_logging`:
+
+``` ruby
+@woopra.enable_logging
 ```
 
 ## Development
