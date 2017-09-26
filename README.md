@@ -154,10 +154,16 @@ woopra(request, config, cookies)
 @woopra.set_cookie(cookies)
 ```
 
-Finally, if you want to enable logging for back-end tracking requests, just call `enable_logging`:
+If you want to enable logging for back-end tracking requests, just call `enable_logging`:
 
 ``` ruby
 @woopra.enable_logging
+```
+
+You can also disable tracking globally, by setting `disable_tracking` to `true` in the config hash.
+
+``` ruby
+config = { domain: 'website.com', idle_timeout: 15000, disable_tracking: true }
 ```
 
 ## Development

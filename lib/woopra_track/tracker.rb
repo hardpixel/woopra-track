@@ -21,6 +21,7 @@ module WoopraTrack
       hide_campaign:     false,
       ip_address:        nil,
       cookie_value:      nil,
+      disable_tracking:  false
     }
 
     def initialize(request)
@@ -88,6 +89,8 @@ module WoopraTrack
     end
 
     def javascript_tag
+      return if disable_tracking?
+
       code = ['(function(){var t,i,e,n=window,o=document,a=arguments,s="script",r=["config","track","trackForm","trackClick","identify","visit","push","call"],c=function(){var t,i=this;for(i._e=[],t=0;r.length>t;t++)(function(t){i[t]=function(){return i._e.push([t].concat(Array.prototype.slice.call(arguments,0))),i}})(r[t])};for(n._w=n._w||{},t=0;a.length>t;t++)n._w[a[t]]=n[a[t]]=n[a[t]]||new c;i=o.createElement(s),i.async=1,i.src="//static.woopra.com/js/w.js",e=o.getElementsByTagName(s)[0],e.parentNode.insertBefore(i,e)})("woopra");']
 
       code << "woopra.config(#{@custom_config.to_json});" if @custom_config.length != 0
@@ -107,12 +110,15 @@ module WoopraTrack
     end
 
     def set_cookie(cookies)
+      return if disable_tracking?
       cookies[@current_config[:cookie_name]] = @current_config[:cookie_value]
     end
 
     private
 
       def http_request(event=nil)
+        return if disable_tracking?
+
         request_url = 'https://www.woopra.com'
         get_params  = {
           host:    @current_config[:domain],
@@ -167,6 +173,10 @@ module WoopraTrack
         else
           @request.remote_ip
         end
+      end
+
+      def disable_tracking?
+        @current_config[:disable_tracking].is_a? TrueClass
       end
   end
 end
