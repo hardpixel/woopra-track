@@ -20,18 +20,18 @@ module WoopraTrack
       ignore_query_url:  true,
       hide_campaign:     false,
       ip_address:        nil,
-      cookie_value:      nil,
-      disable_tracking:  false
+      cookie_value:      nil
     }
 
     def initialize(request)
-      @request         = request
-      @current_config  = @@default_config
-      @custom_config   = { app: @@application_id }
-      @user            = {}
-      @events          = []
-      @user_up_to_date = true
-      @has_pushed      = false
+      @request          = request
+      @current_config   = @@default_config
+      @custom_config    = { app: @@application_id }
+      @user             = {}
+      @events           = []
+      @user_up_to_date  = true
+      @has_pushed       = false
+      @disable_tracking = false
 
       @current_config[:domain]        = @request.host
       @current_config[:cookie_domain] = @request.host
@@ -44,10 +44,12 @@ module WoopraTrack
     end
 
     def config(data)
-      data = Hash(data).select { |k, _v| k.in? @@default_config.keys }
-      data = data.except(:ip_address, :cookie_value)
+      data   = Hash(data)
+      custom = data.select { |k, _v| k.in? @@default_config.keys }
+      custom = custom.except(:ip_address, :cookie_value)
 
-      @custom_config.merge!(data)
+      @custom_config     = @custom_config.merge(custom)
+      @disable_tracking  = data[:disable_tracking].is_a? TrueClass
     end
 
     def identify(user)
@@ -176,7 +178,7 @@ module WoopraTrack
       end
 
       def disable_tracking?
-        @current_config[:disable_tracking].is_a? TrueClass
+        @disable_tracking.is_a? TrueClass
       end
   end
 end
